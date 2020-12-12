@@ -4,7 +4,6 @@ from unittest import mock
 
 class VendingMachine:
     def __init__(self):
-
         self.products = {
             "snickers": 1.2,
             "mars": 1.3,
@@ -19,7 +18,7 @@ class VendingMachine:
             self.deposit.append(coin)
         else:
             print("Coin type not accepted")
-        return coin
+            return coin
 
     def get_deposit_back(self):
 
@@ -40,7 +39,6 @@ class VendingMachine:
             return self.deposit, None
 
     def _calc_change(self, remainder, change):
-
         for coin in reversed(self.accepted_coins):
             if (remainder - coin) >= 0:
                 remainder = self.truncate(remainder - coin)
@@ -71,5 +69,5 @@ class VendingMachine:
         if product_name in self.products:
             del self.products[product_name]
         else:
-            print(f"No product found with name '{product_name}'")
+            raise Exception(f"No product found with name '{product_name}'")
 

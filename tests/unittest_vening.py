@@ -1,9 +1,24 @@
 import unittest
+from vending.machine import VendingMachine
 
-class TestStringMethods(unittest.TestCase):
 
-    def test_upper(self):
-        self.assertEqual('foo'.upper(), 'FOO')
+class TestVendingMachine(unittest.TestCase):
+    def test_insert_coin(self):
+        self.machine = VendingMachine()
+        input_output = [1, 2, 3]
+
+        for coin in input_output:
+            self.machine.insert_coin(coin)
+
+        self.assertEqual(self.machine.deposit, input_output)
+
+        assert self.machine.deposit == input_output
+
+    def test_product_refill(self):
+        self.machine = VendingMachine()
+        self.machine.remove_product_from_list("snickers")
+        with self.assertRaises(Exception):
+            self.machine.remove_product_from_list("jkhsejkhf sjdhf")
 
     def test_isupper(self):
         self.assertTrue('FOO'.isupper())
