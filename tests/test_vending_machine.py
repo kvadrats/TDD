@@ -2,7 +2,38 @@ from vending.machine import VendingMachine
 import pytest
 
 
-def test_update_product_list(capfd):
+def test_product_count_change_after_buying():
+    machine = VendingMachine()
+    machine.insert_coin(2.0)
+    machine.buy_product("snickers")
+
+    assert machine.products.get("snickers")[-1] == 9
+
+
+def test_buying_of_last_product_then_buying_again(capfd):
+    product_count = 1
+    machine = VendingMachine()
+    machine.insert_coin(2)
+    machine.add_product_to_list("coke", 1.5, product_count)
+    machine.buy_product("coke")
+    out, err = capfd.readouterr()
+    assert "'coke' is not available" not in out
+
+    machine.buy_product("coke")
+    out, err = capfd.readouterr()
+    assert "'coke' is not available" in out
+
+
+def test_buying_of_nonexistant_product(capfd):
+    machine = VendingMachine()
+    machine.insert_coin(2)
+    machine.buy_product("coke")
+
+    out, err = capfd.readouterr()
+    assert "'coke' is not available" in out
+
+
+def test_update_product_list():
     machine = VendingMachine()
     # test standard adding the product to the list
     machine.add_product_to_list("coke", 100)
@@ -17,9 +48,8 @@ def test_update_product_list(capfd):
     assert machine.products["snickers"] == 1.5
 
     # test removing of product that doesn't exist
-    machine.remove_product_from_list("you")
-    out, err = capfd.readouterr()
-    assert "No product found with name 'you'" in out
+    with pytest.raises(Exception, match="No product found with name 'you'"):
+        machine.remove_product_from_list("you")
 
 
 def test_fake_coin(capfd):
@@ -63,3 +93,4 @@ def test_get_money_back():
 
     assert len(deposit) == 3
     assert set(deposit) == set([1, 0.05, 0.5])
+

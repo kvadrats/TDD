@@ -9,9 +9,9 @@ class VendingMachine:
 
     def __init__(self):
         self.products = {
-            "snickers": 1.2,
-            "mars": 1.3,
-            "twix": 1
+            "snickers": [1.2, 10],
+            "mars": [1.3, 5],
+            "twix": [1, 7]
         }  # TODO: add available product count for properly simulating vending machine
         self.deposit = []
         self.accepted_coins = [0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
