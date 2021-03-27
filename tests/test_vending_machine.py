@@ -14,7 +14,7 @@ def test_buying_of_last_product_then_buying_again(capfd):
     product_count = 1
     machine = VendingMachine()
     machine.insert_coin(2)
-    machine.add_product_to_list("coke", 1.5, product_count)
+    machine.add_product_to_list("coke", product_count, 1.5)
     machine.buy_product("coke")
     out, err = capfd.readouterr()
     assert "'coke' is not available" not in out
@@ -33,10 +33,30 @@ def test_buying_of_nonexistant_product(capfd):
     assert "'coke' is not available" in out
 
 
+def test_restocking_of_existing_product():
+    machine = VendingMachine()
+    machine.add_product_to_list("mars", 5)
+
+    # check if price remains the same as before restocking
+    assert machine.products.get("mars")[0] == 1.3
+    # check if 5 products have been added to existing 5 product stock
+    assert machine.products.get("mars")[1] == 5+5
+
+
+def test_restocking_of_existing_product_and_update_price():
+    machine = VendingMachine()
+    machine.add_product_to_list("mars", 5, 1.2)
+
+    # check if price has been set to the new one: 1.2
+    assert machine.products.get("mars")[0] == 1.2
+    # check if 5 products have been added to existing 5 product stock
+    assert machine.products.get("mars")[1] == 5+5
+
+
 def test_update_product_list():
     machine = VendingMachine()
     # test standard adding the product to the list
-    machine.add_product_to_list("coke", 100)
+    machine.add_product_to_list("coke", 5, 100)
     assert "coke" in machine.products
 
     # test removal of an existing product from the list
@@ -44,7 +64,7 @@ def test_update_product_list():
     assert "coke" not in machine.products
 
     # test adding a product that is already in the list (expected overwrite)
-    machine.add_product_to_list("snickers", 1.5)
+    machine.add_product_to_list("snickers", 5, 1.5)
     assert machine.products["snickers"] == 1.5
 
     # test removing of product that doesn't exist

@@ -12,7 +12,7 @@ class VendingMachine:
             "snickers": [1.2, 10],
             "mars": [1.3, 5],
             "twix": [1, 7]
-        }  # TODO: add available product count for properly simulating vending machine
+        }
         self.deposit = []
         self.accepted_coins = [0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
 
@@ -52,9 +52,10 @@ class VendingMachine:
 
         product = product.lower()
         if self.products.get(product, None) is not None:
-            if (sum(self.deposit) - self.products[product]) >= 0:
-                change_sum = self.truncate((sum(self.deposit) - self.products[product]))
+            if (sum(self.deposit) - self.products[product][0]) >= 0:
+                change_sum = self.truncate((sum(self.deposit) - self.products[product][0]))
                 change = self._calc_change(change_sum, list())
+                self.products.update({product: [self.products[product][0], self.products[product][1]-1]})
                 return change, product
         else:
             print(f"'{product}' is not available")
@@ -91,17 +92,18 @@ class VendingMachine:
         multiplier = 10 ** decimals
         return math.floor(n * multiplier + 0.5) / multiplier
 
-    def add_product_to_list(self, new_product_name, price):
+    def add_product_to_list(self, new_product_name, count, price=None):
         """
         Simulating an action that a maintenance person would do on a real live
         vending machine, this action adds a product to the available products list
         and sets its price
         :param new_product_name: name as a string of the product, e.g. snickers, twix...
+        :param count: product count, by how many values you wish to stock the product
         :param price: price in as either float or integer
         :return: The updated products list
         """
         new_product_name = new_product_name.lower()
-        self.products.update({new_product_name: price})
+        self.products.update({new_product_name: [price, count]})
 
         return self.products
 
