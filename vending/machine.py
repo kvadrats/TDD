@@ -56,6 +56,8 @@ class VendingMachine:
                 change_sum = self.truncate((sum(self.deposit) - self.products[product][0]))
                 change = self._calc_change(change_sum, list())
                 self.products.update({product: [self.products[product][0], self.products[product][1]-1]})
+                if self.products[product][-1] < 1:
+                    del self.products[product]
                 return change, product
         else:
             print(f"'{product}' is not available")
@@ -103,7 +105,20 @@ class VendingMachine:
         :return: The updated products list
         """
         new_product_name = new_product_name.lower()
-        self.products.update({new_product_name: [price, count]})
+        if price == 0:
+            raise Exception("You are trying to set the price of product to 0, which is not allowed")
+
+        if price is None:
+            if self.products.get(new_product_name, None):
+                self.products.update({new_product_name: [self.products[new_product_name][0],
+                                                         self.products[new_product_name][1]+count]})
+            else:
+                raise Exception("You are trying to add a new product, but not passing it's supposed price")
+        else:
+            if self.products.get(new_product_name, None):
+                self.products.update({new_product_name: [price, self.products[new_product_name][1]+count]})
+            else:
+                self.products.update({new_product_name: [price, count]})
 
         return self.products
 

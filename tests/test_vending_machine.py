@@ -14,7 +14,9 @@ def test_buying_of_last_product_then_buying_again(capfd):
     product_count = 1
     machine = VendingMachine()
     machine.insert_coin(2)
+    machine.insert_coin(2)
     machine.add_product_to_list("coke", product_count, 1.5)
+
     machine.buy_product("coke")
     out, err = capfd.readouterr()
     assert "'coke' is not available" not in out
@@ -22,6 +24,18 @@ def test_buying_of_last_product_then_buying_again(capfd):
     machine.buy_product("coke")
     out, err = capfd.readouterr()
     assert "'coke' is not available" in out
+
+
+def test_add_a_product_with_no_price():
+    machine = VendingMachine()
+    with pytest.raises(Exception, match="You are trying to set the price of product to 0, which is not allowed"):
+        machine.add_product_to_list("blabla", 5, 0.0)
+
+
+def test_add_new_product_without_price():
+    machine = VendingMachine()
+    with pytest.raises(Exception, match="You are trying to add a new product, but not passing it's supposed price"):
+        machine.add_product_to_list("blabla", 5)
 
 
 def test_buying_of_nonexistant_product(capfd):
@@ -65,7 +79,7 @@ def test_update_product_list():
 
     # test adding a product that is already in the list (expected overwrite)
     machine.add_product_to_list("snickers", 5, 1.5)
-    assert machine.products["snickers"] == 1.5
+    assert machine.products["snickers"][0] == 1.5
 
     # test removing of product that doesn't exist
     with pytest.raises(Exception, match="No product found with name 'you'"):
