@@ -1,5 +1,51 @@
-from vending.machine import VendingMachine
+from vending.machine import VendingMachine, fake_function, get_any_joke, get_joke
 import pytest
+from unittest.mock import patch, MagicMock
+
+
+STATIC_JOKE = {
+    "error": False,
+    "category": "Pun",
+    "type": "single",
+    "joke": "How do you make holy water? You freeze it and drill holes in it.",
+    "flags": {
+        "nsfw": False,
+        "religious": True,
+        "political": False,
+        "racist": False,
+        "sexist": False,
+        "explicit": False
+    },
+    "id": 203,
+    "safe": False,
+    "lang": "en"
+}
+
+
+def test_joke_api():
+    static_joke_mock = MagicMock()
+    static_joke_mock.return_value = STATIC_JOKE
+
+    with patch("vending.machine.get_any_joke", static_joke_mock):
+        joke_list = list()
+        for i in range(10):
+            joke = get_joke()
+            joke_list.append(joke)
+
+        for joke in joke_list:
+            for joke_to_compare in joke_list:
+                assert joke == joke_to_compare
+
+
+def test_mocking_of_available_coins():
+    new_available_coin_values = 3
+
+    fake_coin_values = MagicMock()
+    fake_coin_values.return_value = new_available_coin_values
+
+    with patch('vending.machine.function_to_call', fake_coin_values):
+        result = fake_function()
+        assert result == new_available_coin_values
 
 
 def test_product_count_change_after_buying():

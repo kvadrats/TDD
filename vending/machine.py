@@ -1,4 +1,21 @@
 import math
+import requests
+
+
+def fake_function():
+    return function_to_call()
+
+
+def function_to_call():
+    return 3
+
+
+def get_joke():
+    return get_any_joke()
+
+
+def get_any_joke():
+    return requests.get("https://v2.jokeapi.dev/joke/Any").text
 
 
 class VendingMachine:
